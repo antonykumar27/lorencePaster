@@ -19,7 +19,7 @@ import {
   useLoginAdminMutation,
   useRegisterAdminMutation,
   useLazyCheckEmailQuery,
-} from "../store/userApi";
+} from "../store/UserApi";
 import { useAuth } from "../context/AuthContext"; // പാത്ത് കൃത്യമാണെന്ന് ഉറപ്പാക്കുക
 const Auth = () => {
   const navigate = useNavigate();
