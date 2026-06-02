@@ -22,8 +22,7 @@ const Header = ({ darkMode, setDarkMode }) => {
   // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        // Changed to 1024 to match the lg:flex desktop layout
+      if (window.innerWidth >= 768) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -84,31 +83,21 @@ const Header = ({ darkMode, setDarkMode }) => {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full px-4 sm:px-6 py-3 md:py-4 shadow-lg transition-all duration-300 backdrop-blur-md overflow-hidden ${
+        className={`sticky top-0 z-50 px-4 sm:px-6 py-3 md:py-4 shadow-lg transition-all duration-300 backdrop-blur-md ${
           darkMode
             ? "bg-slate-950/90 border-b border-white/10"
             : "bg-[#050522]/90 border-b border-white/20"
         } text-white`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between w-full">
-          {/* Brand/Logo Area (Left aligned on mobile, side by side on desktop) */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="text-base sm:text-lg font-bold tracking-wider text-white hover:text-red-400 transition-colors"
-            >
-              DIVINE MINISTRIES
-            </Link>
-          </div>
-
-          {/* Desktop Navigation - hidden on mobile, shown on lg+ */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 mx-auto">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Desktop Navigation - hidden on mobile, shown on md+ */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 flex-wrap">
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `relative px-2.5 py-2 text-xs xl:text-sm font-semibold tracking-wide transition-colors duration-200 hover:text-red-400 whitespace-nowrap ${
+                  `relative px-3 py-2 text-sm font-semibold tracking-wide transition-colors duration-200 hover:text-red-400 whitespace-nowrap ${
                     isActive ? "text-red-500" : "text-gray-300"
                   }`
                 }
@@ -133,8 +122,8 @@ const Header = ({ darkMode, setDarkMode }) => {
             ))}
           </nav>
 
-          {/* Right Action Icons & Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile: Show a condensed brand or menu hint? We keep the same layout but nav hidden until menu button */}
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto md:ml-0">
             {/* Dark mode toggle */}
             <motion.button
               whileTap={{ scale: 0.9 }}
@@ -144,14 +133,14 @@ const Header = ({ darkMode, setDarkMode }) => {
               aria-label="Toggle dark mode"
             >
               {darkMode ? (
-                <Sun size={18} className="text-yellow-400" />
+                <Sun size={20} className="text-yellow-400" />
               ) : (
-                <Moon size={18} className="text-white" />
+                <Moon size={20} className="text-white" />
               )}
             </motion.button>
 
             {/* Auth buttons - desktop */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <div className="flex items-center gap-3">
                   {user?.isAdmin && (
@@ -182,7 +171,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               )}
             </div>
 
-            {/* ✨ Donate Button ✨ */}
+            {/* ✨ Donate Button - Enhanced ✨ */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -201,10 +190,10 @@ const Header = ({ darkMode, setDarkMode }) => {
             >
               <Link
                 to="/donate"
-                className="relative overflow-hidden group bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 sm:gap-2 shadow-md hover:shadow-xl"
+                className="relative overflow-hidden group bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-xl"
               >
                 <Heart
-                  size={14}
+                  size={16}
                   className="fill-white group-hover:scale-110 transition-transform duration-200"
                 />
                 <span>DONATE</span>
@@ -216,16 +205,16 @@ const Header = ({ darkMode, setDarkMode }) => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
               aria-label="Open menu"
             >
-              <Menu size={22} />
+              <Menu size={24} />
             </motion.button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay (Fullscreen Slide-in) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -235,7 +224,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
             />
 
             {/* Menu Panel */}
@@ -244,24 +233,24 @@ const Header = ({ darkMode, setDarkMode }) => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className={`fixed right-0 top-0 h-full w-[85%] max-w-xs z-50 shadow-2xl p-5 flex flex-col ${
+              className={`fixed right-0 top-0 h-full w-4/5 max-w-sm z-50 shadow-2xl p-6 flex flex-col ${
                 darkMode
                   ? "bg-slate-900/95 backdrop-blur-xl"
                   : "bg-[#050522]/95 backdrop-blur-xl"
-              } text-white lg:hidden`}
+              } text-white md:hidden`}
             >
               {/* Close button inside panel */}
-              <div className="flex justify-end mb-2">
+              <div className="flex justify-end mb-4">
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 rounded-full hover:bg-white/10"
                 >
-                  <X size={22} />
+                  <X size={24} />
                 </button>
               </div>
 
               {/* Mobile Navigation Links */}
-              <nav className="flex flex-col gap-1 flex-1 overflow-y-auto pr-1">
+              <nav className="flex flex-col gap-1 flex-1 overflow-y-auto">
                 {navItems.map((item, i) => (
                   <motion.div
                     key={item.name}
@@ -274,7 +263,7 @@ const Header = ({ darkMode, setDarkMode }) => {
                       to={item.path}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={({ isActive }) =>
-                        `block py-2.5 px-4 rounded-xl text-sm font-semibold tracking-wide transition-all hover:bg-white/10 ${
+                        `block py-3 px-4 rounded-xl text-base font-semibold tracking-wide transition-all hover:bg-white/10 ${
                           isActive
                             ? "bg-gradient-to-r from-red-500/20 to-amber-500/20 text-red-400 border-l-4 border-red-500"
                             : "text-gray-300"
@@ -288,24 +277,24 @@ const Header = ({ darkMode, setDarkMode }) => {
               </nav>
 
               {/* Mobile Auth & Footer */}
-              <div className="pt-4 mt-auto border-t border-white/10 space-y-3">
+              <div className="pt-6 mt-auto border-t border-white/20 space-y-4">
                 {user ? (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {user?.isAdmin && (
                       <Link
                         to="/donation-dashboard"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-yellow-500/20 text-yellow-400 text-sm font-semibold"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-yellow-500/20 text-yellow-400 font-semibold"
                       >
-                        <LayoutDashboard size={16} />
+                        <LayoutDashboard size={18} />
                         Dashboard
                       </Link>
                     )}
                     <button
                       onClick={handleLogout}
-                      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-sm transition-colors"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
                     >
-                      <LogOut size={16} />
+                      <LogOut size={18} />
                       Logout
                     </button>
                   </div>
@@ -315,13 +304,13 @@ const Header = ({ darkMode, setDarkMode }) => {
                       navigate("/admin-login");
                       setIsMobileMenuOpen(false);
                     }}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-sm transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
                   >
-                    <LogIn size={16} />
+                    <LogIn size={18} />
                     Login
                   </button>
                 )}
-                <p className="text-center text-[10px] text-white/40">
+                <p className="text-center text-xs text-white/50">
                   Divine Ministries © 2026
                 </p>
               </div>

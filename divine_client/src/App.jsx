@@ -57,11 +57,13 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+      {/* 1. Added w-full and overflow-x-hidden to the parent container */}
+      <div className="min-h-screen w-full bg-gray-50 dark:bg-slate-900 transition-colors duration-300 overflow-x-hidden">
         {/* Pass darkMode state to Header */}
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
-        <main className="max-w-7xl mx-auto p-4">
+        {/* 2. Added w-full and overflow-hidden to main tag to stop inner components from stretching the screen */}
+        <main className="w-full max-w-7xl mx-auto p-4 overflow-hidden">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/charity" element={<Charity />} />
