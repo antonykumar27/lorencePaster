@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useGetDonationHistoryQuery } from "../store/PrayerRequestApi";
 
 const DonationDashboard = () => {
- a
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { data, isLoading, error } = useGetDonationHistoryQuery();
   // 🛡️ Admin Security Check: അഡ്മിൻ അല്ലെങ്കിൽ മാത്രം ഹോം പേജിലേക്ക് വിടുക

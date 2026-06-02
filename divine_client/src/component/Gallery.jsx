@@ -1,4 +1,3 @@
-// src/pages/Gallery.jsx
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -75,8 +74,7 @@ const Gallery = () => {
     isError,
     refetch,
   } = useGetGalleryImagesQuery();
-  console.log("response", response);
-  console.log("isLoading", isLoading);
+
   const [deleteGalleryImage, { isLoading: isDeleting }] =
     useDeleteGalleryImageMutation();
 
@@ -90,7 +88,7 @@ const Gallery = () => {
       date: item.date,
       description: item.description,
       image: item.media?.[0]?.url || "",
-      orientation: "landscape",
+      orientation: item.orientation || "landscape", // 1. മാറ്റം: ഇവിടെ ബാക്കെൻഡിൽ നിന്നുള്ള യഥാർത്ഥ orientation എടുത്തു!
     }));
   }, [response]);
 
@@ -142,7 +140,7 @@ const Gallery = () => {
       toast.success("Image deleted successfully!");
       setDeleteModalOpen(false);
       setSelectedImageId(null);
-      refetch(); // Refresh the list
+      refetch();
     } catch (err) {
       toast.error(err.data?.message || "Failed to delete image");
     }
@@ -242,87 +240,100 @@ const Gallery = () => {
         </div>
       </div>
 
-      {/* Gallery Grid */}
+      {/* 2. മാറ്റം: ഇവിടെ ഗ്രിഡ് മാറ്റി സുന്ദരമായ CSS Columns (Masonry) ലേഔട്ട് നൽകി */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-7xl mx-auto px-6 pb-20"
+        className="max-w-7xl mx-auto px-6 pb-20 columns-1 sm:columns-2 lg:columns-3 gap-6"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-min gap-6">
-          {filteredItems.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer"
-              onClick={() => openLightbox(idx)}
-            >
-              <div className="relative aspect-w-4 aspect-h-3 overflow-hidden bg-slate-200 dark:bg-slate-800">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <div className="text-white">
-                    <h3 className="font-bold text-lg">{item.title}</h3>
-                    <p className="text-sm text-gray-200">{item.date}</p>
-                  </div>
-                </div>
+        {/* ഗാലറി കാർഡുകൾ ലൂപ്പ് ചെയ്യുന്ന ഭാഗം */}
+        {filteredItems.map((item, idx) => (
+          <motion.div
+            key={item.id}
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+            className="break-inside-avoid mb-6 relative rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-slate-100 dark:bg-slate-900 block w-full group border border-slate-200/60 dark:border-slate-800"
+            onClick={() => openLightbox(idx)}
+          >
+            {/* ഇമേജ് സെക്ഷൻ */}
+            <div className="relative overflow-hidden bg-slate-200 dark:bg-slate-800">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              {/* ഹോവർ ചെയ്യുമ്പോൾ മാത്രം വരുന്ന ഗ്രേഡിയന്റ് overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <p className="text-white text-xs line-clamp-2">
+                  {item.description}
+                </p>
               </div>
+            </div>
 
-              {/* Category Badge */}
-              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-                {item.category === "events" && (
-                  <Calendar size={12} className="inline mr-1" />
-                )}
-                {item.category === "prayer" && (
-                  <Church size={12} className="inline mr-1" />
-                )}
-                {item.category === "ministries" && (
-                  <Users size={12} className="inline mr-1" />
-                )}
-                {item.category}
+            {/* താഴെ ടൈറ്റിലും ഡേറ്റും കാണിക്കുന്ന പുതിയ സെക്ഷൻ (Real Feel ലുക്ക്) */}
+            <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="font-bold text-slate-800 dark:text-white text-base truncate">
+                {item.title}
+              </h3>
+
+              {/* ഡേറ്റ് കാണിക്കുന്ന ഭാഗം */}
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
+                <Calendar size={13} className="text-indigo-500" />
+                <span>
+                  {new Date(item.date).toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
+            </div>
 
-              {/* Admin Action Buttons (Edit & Delete) */}
-              {user?.isAdmin && (
-                <div className="absolute top-3 right-3 flex gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditClick(item.id);
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition"
-                    aria-label="Edit"
-                  >
-                    <Edit size={14} />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteClick(item.id);
-                    }}
-                    className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition"
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
+            {/* Category Badge */}
+            <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full capitalize flex items-center gap-1">
+              {item.category === "events" && <Calendar size={12} />}
+              {item.category === "prayer" && <Church size={12} />}
+              {item.category === "ministries" && <Users size={12} />}
+              {item.category}
+            </div>
 
-        {filteredItems.length === 0 && (
-          <div className="text-center py-20 text-slate-500 dark:text-slate-400">
-            {selectedCategory === "all"
-              ? "No images in the gallery yet. Check back soon!"
-              : `No images found in the ${selectedCategory} category.`}
-          </div>
-        )}
+            {/* Admin Action Buttons (Edit & Delete) */}
+            {user?.isAdmin && (
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditClick(item.id);
+                  }}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition"
+                  aria-label="Edit"
+                >
+                  <Edit size={14} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(item.id);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition"
+                  aria-label="Delete"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            )}
+          </motion.div>
+        ))}
       </motion.div>
+
+      {filteredItems.length === 0 && (
+        <div className="text-center py-20 text-slate-500 dark:text-slate-400">
+          {selectedCategory === "all"
+            ? "No images in the gallery yet. Check back soon!"
+            : `No images found in the ${selectedCategory} category.`}
+        </div>
+      )}
 
       {/* Lightbox Modal */}
       <AnimatePresence>
@@ -401,113 +412,102 @@ const Gallery = () => {
 export default Gallery;
 
 // // src/pages/Gallery.jsx
-// import React, { useState } from "react";
+// import React, { useState, useMemo } from "react";
 // import { motion, AnimatePresence } from "framer-motion";
-// import { Link } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
 // import {
 //   X,
 //   ChevronLeft,
 //   ChevronRight,
-//   Filter,
 //   Image as ImageIcon,
 //   Calendar,
 //   Users,
 //   Church,
 //   PlusCircle,
+//   Edit,
+//   Trash2,
+//   Loader2,
 // } from "lucide-react";
 // import { useAuth } from "../context/AuthContext";
+// import {
+//   useGetGalleryImagesQuery,
+//   useDeleteGalleryImageMutation,
+// } from "../store/GalleryApi";
+
+// // Delete Confirmation Modal Component
+// const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, isDeleting }) => {
+//   if (!isOpen) return null;
+//   return (
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+//       <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md mx-4 shadow-xl">
+//         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+//           Delete Image
+//         </h3>
+//         <p className="text-slate-600 dark:text-slate-300 mb-6">
+//           Are you sure you want to delete this image? This action cannot be
+//           undone.
+//         </p>
+//         <div className="flex justify-end gap-3">
+//           <button
+//             onClick={onClose}
+//             className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600 transition"
+//           >
+//             Cancel
+//           </button>
+//           <button
+//             onClick={onConfirm}
+//             disabled={isDeleting}
+//             className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2"
+//           >
+//             {isDeleting ? (
+//               <Loader2 size={16} className="animate-spin" />
+//             ) : (
+//               <Trash2 size={16} />
+//             )}
+//             {isDeleting ? "Deleting..." : "Delete"}
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
 // const Gallery = () => {
 //   const [selectedCategory, setSelectedCategory] = useState("all");
 //   const [lightboxOpen, setLightboxOpen] = useState(false);
 //   const [currentIndex, setCurrentIndex] = useState(0);
+//   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+//   const [selectedImageId, setSelectedImageId] = useState(null);
 //   const { user } = useAuth();
-//   // Sample gallery data (replace with your own images & descriptions)
-//   const galleryItems = [
-//     {
-//       id: 1,
-//       title: "Sunday Worship Service",
-//       category: "events",
-//       date: "May 15, 2026",
-//       description:
-//         "Full house during the morning worship – powerful presence of God.",
-//       image:
-//         "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&auto=format",
-//       orientation: "landscape",
-//     },
-//     {
-//       id: 2,
-//       title: "Women's Prayer Meeting",
-//       category: "prayer",
-//       date: "May 12, 2026",
-//       description: "Sisters gathered for intercessory prayer and fellowship.",
-//       image:
-//         "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&auto=format",
-//       orientation: "portrait",
-//     },
-//     {
-//       id: 3,
-//       title: "K.I.D.S Ministry – Bible Story Time",
-//       category: "ministries",
-//       date: "May 10, 2026",
-//       description:
-//         "Children learning about God's love through stories and crafts.",
-//       image:
-//         "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format",
-//       orientation: "landscape",
-//     },
-//     {
-//       id: 4,
-//       title: "M.I.C Men's Fellowship",
-//       category: "ministries",
-//       date: "May 8, 2026",
-//       description:
-//         "Men gathering for breakfast, Bible study and accountability.",
-//       image:
-//         "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&auto=format",
-//       orientation: "portrait",
-//     },
-//     {
-//       id: 5,
-//       title: "Divine Hands – Food Distribution",
-//       category: "events",
-//       date: "May 5, 2026",
-//       description: "Providing meals to the homeless and needy families.",
-//       image:
-//         "https://images.unsplash.com/photo-1593113598332-cd288d649a6b?w=800&auto=format",
-//       orientation: "landscape",
-//     },
-//     {
-//       id: 6,
-//       title: "EmpowHer Conference",
-//       category: "events",
-//       date: "April 28, 2026",
-//       description: "Empowering women through worship, workshops and prayer.",
-//       image:
-//         "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&auto=format",
-//       orientation: "landscape",
-//     },
-//     {
-//       id: 7,
-//       title: "Night of Worship & Prayer",
-//       category: "prayer",
-//       date: "April 25, 2026",
-//       description: "All-night intercession and praise.",
-//       image:
-//         "https://images.unsplash.com/photo-1505236858219-8359eb29e0cb?w=800&auto=format",
-//       orientation: "portrait",
-//     },
-//     {
-//       id: 8,
-//       title: "Youth Camp 2026",
-//       category: "ministries",
-//       date: "April 18, 2026",
-//       description: "Teens encountering God in a weekend retreat.",
-//       image:
-//         "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&auto=format",
-//       orientation: "landscape",
-//     },
-//   ];
+//   const navigate = useNavigate();
 
+//   const {
+//     data: response,
+//     isLoading,
+//     isError,
+//     refetch,
+//   } = useGetGalleryImagesQuery();
+//   console.log("response", response);
+//   console.log("isLoading", isLoading);
+//   const [deleteGalleryImage, { isLoading: isDeleting }] =
+//     useDeleteGalleryImageMutation();
+
+//   // Extract gallery items from API response
+//   const galleryItems = useMemo(() => {
+//     if (!response?.data) return [];
+//     return response.data.map((item) => ({
+//       id: item._id,
+//       title: item.title,
+//       category: item.category,
+//       date: item.date,
+//       description: item.description,
+//       image: item.media?.[0]?.url || "",
+//       orientation: "landscape",
+//     }));
+//   }, [response]);
+
+//   // Categories for filtering
 //   const categories = [
 //     { id: "all", label: "All", icon: ImageIcon },
 //     { id: "events", label: "Events", icon: Calendar },
@@ -515,11 +515,13 @@ export default Gallery;
 //     { id: "ministries", label: "Ministries", icon: Users },
 //   ];
 
-//   const filteredItems =
-//     selectedCategory === "all"
-//       ? galleryItems
-//       : galleryItems.filter((item) => item.category === selectedCategory);
+//   // Filter items based on selected category
+//   const filteredItems = useMemo(() => {
+//     if (selectedCategory === "all") return galleryItems;
+//     return galleryItems.filter((item) => item.category === selectedCategory);
+//   }, [galleryItems, selectedCategory]);
 
+//   // Lightbox handlers
 //   const openLightbox = (index) => {
 //     setCurrentIndex(index);
 //     setLightboxOpen(true);
@@ -541,7 +543,30 @@ export default Gallery;
 //     );
 //   };
 
-//   // Keyboard navigation
+//   // Delete handler
+//   const handleDeleteClick = (id) => {
+//     setSelectedImageId(id);
+//     setDeleteModalOpen(true);
+//   };
+
+//   const confirmDelete = async () => {
+//     try {
+//       await deleteGalleryImage(selectedImageId).unwrap();
+//       toast.success("Image deleted successfully!");
+//       setDeleteModalOpen(false);
+//       setSelectedImageId(null);
+//       refetch(); // Refresh the list
+//     } catch (err) {
+//       toast.error(err.data?.message || "Failed to delete image");
+//     }
+//   };
+
+//   // Edit handler
+//   const handleEditClick = (id) => {
+//     navigate(`/gallery/edit/${id}`);
+//   };
+
+//   // Keyboard navigation for lightbox
 //   React.useEffect(() => {
 //     const handleKeyDown = (e) => {
 //       if (!lightboxOpen) return;
@@ -563,6 +588,24 @@ export default Gallery;
 //     visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 20 } },
 //   };
 
+//   if (isLoading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <Loader2 className="animate-spin w-12 h-12 text-indigo-600" />
+//       </div>
+//     );
+//   }
+
+//   if (isError) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <div className="text-center text-red-600">
+//           <p>Failed to load gallery images. Please try again later.</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
 //   return (
 //     <div className="bg-white dark:bg-slate-950 transition-colors duration-500 min-h-screen">
 //       {/* Hero Header */}
@@ -578,6 +621,19 @@ export default Gallery;
 //           </p>
 //         </div>
 //       </section>
+
+//       {/* Admin Action Buttons */}
+//       {user?.isAdmin && (
+//         <div className="max-w-7xl mx-auto px-6 mb-4 flex justify-end gap-3">
+//           <Link
+//             to="/gallery/create"
+//             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-full shadow-md transition"
+//           >
+//             <PlusCircle size={18} />
+//             Add New Image
+//           </Link>
+//         </div>
+//       )}
 
 //       {/* Category Filter */}
 //       <div className="max-w-7xl mx-auto px-6 pb-8">
@@ -599,7 +655,7 @@ export default Gallery;
 //         </div>
 //       </div>
 
-//       {/* Gallery Grid (Bento / Masonry style) */}
+//       {/* Gallery Grid */}
 //       <motion.div
 //         variants={containerVariants}
 //         initial="hidden"
@@ -612,9 +668,7 @@ export default Gallery;
 //               key={item.id}
 //               variants={itemVariants}
 //               whileHover={{ y: -5 }}
-//               className={`group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer ${
-//                 item.orientation === "portrait" ? "row-span-2" : "row-span-1"
-//               }`}
+//               className="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer"
 //               onClick={() => openLightbox(idx)}
 //             >
 //               <div className="relative aspect-w-4 aspect-h-3 overflow-hidden bg-slate-200 dark:bg-slate-800">
@@ -623,7 +677,6 @@ export default Gallery;
 //                   alt={item.title}
 //                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 //                 />
-//                 {/* Overlay */}
 //                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
 //                   <div className="text-white">
 //                     <h3 className="font-bold text-lg">{item.title}</h3>
@@ -631,7 +684,8 @@ export default Gallery;
 //                   </div>
 //                 </div>
 //               </div>
-//               {/* Optional: info badge */}
+
+//               {/* Category Badge */}
 //               <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
 //                 {item.category === "events" && (
 //                   <Calendar size={12} className="inline mr-1" />
@@ -644,13 +698,41 @@ export default Gallery;
 //                 )}
 //                 {item.category}
 //               </div>
+
+//               {/* Admin Action Buttons (Edit & Delete) */}
+//               {user?.isAdmin && (
+//                 <div className="absolute top-3 right-3 flex gap-2">
+//                   <button
+//                     onClick={(e) => {
+//                       e.stopPropagation();
+//                       handleEditClick(item.id);
+//                     }}
+//                     className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition"
+//                     aria-label="Edit"
+//                   >
+//                     <Edit size={14} />
+//                   </button>
+//                   <button
+//                     onClick={(e) => {
+//                       e.stopPropagation();
+//                       handleDeleteClick(item.id);
+//                     }}
+//                     className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition"
+//                     aria-label="Delete"
+//                   >
+//                     <Trash2 size={14} />
+//                   </button>
+//                 </div>
+//               )}
 //             </motion.div>
 //           ))}
 //         </div>
 
 //         {filteredItems.length === 0 && (
 //           <div className="text-center py-20 text-slate-500 dark:text-slate-400">
-//             No images in this category yet. Check back soon!
+//             {selectedCategory === "all"
+//               ? "No images in the gallery yet. Check back soon!"
+//               : `No images found in the ${selectedCategory} category.`}
 //           </div>
 //         )}
 //       </motion.div>
@@ -717,6 +799,14 @@ export default Gallery;
 //           </motion.div>
 //         )}
 //       </AnimatePresence>
+
+//       {/* Delete Confirmation Modal */}
+//       <DeleteConfirmModal
+//         isOpen={deleteModalOpen}
+//         onClose={() => setDeleteModalOpen(false)}
+//         onConfirm={confirmDelete}
+//         isDeleting={isDeleting}
+//       />
 //     </div>
 //   );
 // };

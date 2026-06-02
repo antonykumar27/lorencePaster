@@ -4,7 +4,7 @@ const { uploadFileToCloudinary } = require("../config/cloudinary");
 const fs = require("fs").promises;
 const cloudinary = require("cloudinary");
 const createGalleryImage = catchAsyncError(async (req, res) => {
-  const { title, date, category, description } = req.body;
+  const { title, date, category, description, orientation } = req.body;
   if (!title || !date || !category || !description) {
     return res
       .status(400)
@@ -29,6 +29,7 @@ const createGalleryImage = catchAsyncError(async (req, res) => {
     date,
     category,
     description,
+    orientation,
     media,
   });
   res.status(201).json({ success: true, data: gallery });

@@ -51,6 +51,8 @@ const Header = ({ darkMode, setDarkMode }) => {
     { name: "PRAYER TIME", path: "/prayerSchedule" },
     { name: "PRAYER REQUEST", path: "/prayer-request" },
     { name: "PRAYER LIST", path: "/prayer-requestList" },
+    { name: "VOLUNTEERS", path: "/volunteers" },
+    { name: "HELP REQUEST", path: "/help_request" },
     { name: "CONTACT", path: "/contact" },
   ];
 

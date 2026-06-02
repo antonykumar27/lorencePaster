@@ -9,6 +9,7 @@ const gallerySchema = new mongoose.Schema(
       required: true,
     },
     description: { type: String, required: true },
+    orientation: { type: String, required: true },
     media: [
       {
         url: String,

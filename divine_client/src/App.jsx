@@ -37,11 +37,15 @@ import Charity from "./component/Charity";
 import ViewAllHelp from "./component/ViewAllHelp";
 import Sponsor from "./component/Sponsor";
 import CreateYoutube from "./component/CreateYoutube";
+import Volunteer from "./component/Volunteer";
+import VolunteersRequestList from "./component/VolunteersRequestList";
+import HelpRequest from "./component/HelpRequest";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
-    // localStorage initial value
-    return localStorage.getItem("theme") === "dark";
+    // ലോക്കൽ സ്റ്റോറേജിൽ കൃത്യമായി 'light' എന്ന് ഉണ്ടെങ്കിൽ മാത്രം false (Light Mode) ആകും
+    // ആദ്യമായി തുറക്കുമ്പോഴോ അല്ലെങ്കിൽ 'dark' എന്ന് കിടക്കുമ്പോഴോ true (Dark Mode) ആയിരിക്കും
+    return localStorage.getItem("theme") !== "light";
   });
 
   useEffect(() => {
@@ -67,6 +71,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/charity" element={<Charity />} />
+            <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/volunteers" element={<VolunteersRequestList />} />
+            <Route path="/help_request" element={<HelpRequest />} />
             <Route path="/viewAllHelp" element={<ViewAllHelp />} />
             <Route path="/about" element={<About />} />
             <Route path="/ministries" element={<Ministries />} />

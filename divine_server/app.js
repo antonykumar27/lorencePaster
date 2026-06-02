@@ -26,11 +26,13 @@ const razorpayPayment = require("./routes/razorpayPayment");
 const users = require("./routes/users");
 const programs = require("./routes/programs");
 const gallery = require("./routes/gallery");
+const volunteers = require("./routes/volunteers");
 
 app.use("/api/v1/users", users);
 app.use("/api/v1/prayer", razorpayPayment); // സ്പേസ് ഒഴിവാക്കി
 app.use("/api/v1/programs", programs); // സ്പേസ് ഒഴിവാക്കി
 app.use("/api/v1/gallery", gallery); // സ്പേസ് ഒഴിവാക്കി
+app.use("/api/v1/volunteers", volunteers);
 
 // Production configuration
 if (process.env.NODE_ENV === "production") {

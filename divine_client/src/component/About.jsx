@@ -212,7 +212,7 @@ const About = () => {
                   />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                  റവ. ജോൺസ് ദേവകുമാർ
+                  Fr. ലോറൻസ് ജോസഫ്
                 </h3>
                 <p className="text-amber-600 dark:text-amber-400 font-semibold">
                   സ്ഥാപകൻ & പ്രസിഡൻ്റ്
@@ -250,14 +250,14 @@ const About = () => {
                   />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                  സിസ്റ്റർ ക്രിസ്റ്റി ജോൺസ്
+                  സിസ്റ്റർ ഐറിൻ . G
                 </h3>
                 <p className="text-rose-600 dark:text-rose-400 font-semibold">
                   പ്രാർത്ഥനാ യോദ്ധാവ് & ആരാധനാ നേതാവ്
                 </p>
                 <div className="mt-4 text-slate-600 dark:text-slate-300 text-sm space-y-2">
                   <p>
-                    റവ. ജോൺസിൻ്റെ ശുശ്രൂഷ പങ്കാളി എന്ന നിലയിൽ, ക്രിസ്റ്റി
+                    Pr. ലോറൻസ് ജോസഫിന്റെ ശുശ്രൂഷ പങ്കാളി എന്ന നിലയിൽ, ഐറിൻ
                     പ്രാർത്ഥനയിലും ആരാധനയിലും ആഴമായ അഭിഷേകം കൊണ്ടുവരുന്നു.
                   </p>
                   <p>

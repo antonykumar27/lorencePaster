@@ -5,6 +5,7 @@ import { userApi } from "./UserApi";
 import { prayerRequestApi } from "./PrayerRequestApi";
 import { programApi } from "./ProgrammsApi";
 import { galleryApi } from "./GalleryApi";
+import { volunteerApi } from "./VolunteerApi";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     [prayerRequestApi.reducerPath]: prayerRequestApi.reducer,
     [programApi.reducerPath]: programApi.reducer,
     [galleryApi.reducerPath]: galleryApi.reducer,
+    [volunteerApi.reducerPath]: volunteerApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -20,7 +22,8 @@ export const store = configureStore({
       .concat(userApi.middleware)
       .concat(prayerRequestApi.middleware)
       .concat(programApi.middleware)
-      .concat(galleryApi.middleware),
+      .concat(galleryApi.middleware)
+      .concat(volunteerApi.middleware),
 });
 
 setupListeners(store.dispatch); // Set up listeners for RTK query
