@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Dark mode variant for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Base styles - dark mode നേരിട്ട് body യിലും ചേർക്കാം */
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-slate-900 text-white;
+  }
+}

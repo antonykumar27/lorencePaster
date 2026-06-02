@@ -1,0 +1,36 @@
+# Dependencies - വലിയ ലൈബ്രറികൾ ഒഴിവാക്കാൻ
+node_modules/
+.pnp
+.pnp.js
+
+# Testing - ടെസ്റ്റ് റിപ്പോർട്ടുകൾ ഒഴിവാക്കാൻ
+coverage/
+
+# Production / Build - ബിൽഡ് ഫയലുകൾ ഒഴിവാക്കാൻ
+dist/
+build/
+.vercel/
+
+# Environment Variables - രഹസ്യ വിവരങ്ങൾ സംരക്ഷിക്കാൻ (Stops private keys from leaking)
+.env
+.env.local
+.env.*.local
+config/.env
+
+# Local Uploads - അപ്‌ലോഡ് ചെയ്യുന്ന ഫയലുകൾ ഗിറ്റിലേക്ക് പോകാതിരിക്കാൻ
+uploads/
+
+# Logs - അനാവശ്യ ലോഗുകൾ ഒഴിവാക്കാൻ
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Editor specific - എഡിറ്റർ സെറ്റിംഗ്സ് ഒഴിവാക്കാൻ
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
