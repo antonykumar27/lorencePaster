@@ -84,7 +84,7 @@ const AdminDashboard = () => {
     },
   ];
 
-  // Upcoming Programs (still dummy – replace with real API later)
+  // Upcoming Programs
   const upcomingPrograms = [
     {
       name: "ഞായറാഴ്ച പ്രാർത്ഥന",
@@ -106,7 +106,6 @@ const AdminDashboard = () => {
     },
   ];
 
-  // Dummy arrays for UI structure – counts are replaced with real data
   const prayerRequestsCount = statsData.pendingPrayers || 0;
   const helpRequestsCount = statsData.pendingHelpRequests || 0;
   const unreadMessages = statsData.unreadMessages || 0;
@@ -159,7 +158,7 @@ const AdminDashboard = () => {
         </h1>
         <div className="flex items-center space-x-4">
           <span className="text-gray-600 dark:text-gray-400 text-sm">
-            2026 ജൂൺ 05, വ്യാഴം
+            2026 ജൂൺ 05, വെള്ളി
           </span>
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -199,9 +198,11 @@ const AdminDashboard = () => {
               </p>
             </motion.div>
 
+            {/* Top Donation Banner - Fixed Mobile Touch */}
             <motion.div
               variants={cardVariants}
-              className="bg-gradient-to-br from-red-50 to-red-100/60 dark:from-slate-900 dark:to-slate-800/60 border border-red-100 dark:border-slate-700 p-8 rounded-3xl flex flex-col justify-between shadow-sm cursor-pointer hover:shadow-md transition"
+              whileTap={{ scale: 0.98 }}
+              className="bg-gradient-to-br from-red-50 to-red-100/60 dark:from-slate-900 dark:to-slate-800/60 border border-red-100 dark:border-slate-700 p-8 rounded-3xl flex flex-col justify-between shadow-sm cursor-pointer select-none active:opacity-90 hover:shadow-md transition"
               onClick={() => navigate("/donation-dashboard")}
             >
               <span className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider">
@@ -218,7 +219,7 @@ const AdminDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Core Statistics Grid (clickable) */}
+          {/* Core Statistics Grid */}
           <div>
             <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
               📊 പ്രധാന കണക്കുകൾ
@@ -228,12 +229,13 @@ const AdminDashboard = () => {
                 <motion.div
                   key={idx}
                   variants={cardVariants}
+                  whileTap={{ scale: 0.98 }}
                   onClick={stat.onClick}
-                  className="bg-white dark:bg-slate-900/60 dark:backdrop-blur-sm border border-gray-100 dark:border-slate-800 rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer"
+                  className="bg-white dark:bg-slate-900/60 dark:backdrop-blur-sm border border-gray-100 dark:border-slate-800 rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer select-none active:opacity-90"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider">
+                      <p className="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider breakdown-words">
                         {stat.title}
                       </p>
                       <p className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
@@ -246,7 +248,7 @@ const AdminDashboard = () => {
                       )}
                     </div>
                     <div
-                      className={`bg-gradient-to-br ${stat.color} p-2 rounded-full text-white text-xl shadow-md`}
+                      className={`bg-gradient-to-br ${stat.color} p-2 rounded-full text-white text-xl shadow-md flex-shrink-0`}
                     >
                       {stat.icon}
                     </div>
@@ -350,7 +352,7 @@ const AdminDashboard = () => {
             <motion.div variants={cardVariants} className="space-y-6">
               {/* Pending Prayer Requests */}
               <div
-                className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer"
+                className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer active:opacity-90"
                 onClick={() => navigate("/prayer-requestList")}
               >
                 <div className="flex justify-between items-center mb-3">
@@ -366,7 +368,7 @@ const AdminDashboard = () => {
 
               {/* New Help Requests */}
               <div
-                className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer"
+                className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer active:opacity-90"
                 onClick={() => navigate("/help_request")}
               >
                 <h3 className="font-bold text-lg mb-2">
@@ -383,7 +385,7 @@ const AdminDashboard = () => {
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div
               variants={cardVariants}
-              className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer"
+              className="bg-white dark:bg-slate-900/60 rounded-3xl p-6 cursor-pointer active:opacity-90"
               onClick={() => navigate("/admin/messages")}
             >
               <div className="flex justify-between items-center">
