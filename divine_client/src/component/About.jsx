@@ -11,10 +11,12 @@ import {
   BookOpen,
   ArrowRight,
   CheckCircle,
+  ArrowUpRight,
   Award, // ✅ added for legacy stats
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import PasterLorence from "../assets/lo.png";
+import PasterLorence1 from "../assets/igine.png";
 const About = () => {
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -185,85 +187,118 @@ const About = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white">
+            <span className="text-amber-600 dark:text-amber-400 text-xs font-bold tracking-widest uppercase">
+              ദർശനത്തിന് പിന്നിലെ ദീപശിഖകൾ
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-800 dark:text-white mt-2">
               ഞങ്ങളുടെ നേതൃത്വം
             </h2>
-            <div className="w-24 h-1 bg-amber-500 mx-auto mt-3 rounded-full" />
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-500 to-red-500 mx-auto mt-4 rounded-full" />
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-10">
-            {/* Rev. Jones Devakumar */}
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Pr. Lorence Joseph (Founder & Chairman) */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
-              className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+              className="bg-white/80 dark:bg-slate-800/60 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-slate-200/60 dark:border-slate-700/50 relative overflow-hidden group"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-amber-500 shadow-xl mb-5">
+                <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-amber-500/30 shadow-xl mb-6 relative group-hover:border-amber-500 transition-all duration-300">
                   <img
-                    src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400&auto=format"
-                    alt="Rev. Jones Devakumar"
-                    className="w-full h-full object-cover"
+                    src={PasterLorence}
+                    alt="Pr. Lorence Joseph"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                  Fr. ലോറൻസ് ജോസഫ്
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white">
+                  Pr. ലോറൻസ് ജോസഫ്
                 </h3>
-                <p className="text-amber-600 dark:text-amber-400 font-semibold">
-                  സ്ഥാപകൻ & പ്രസിഡൻ്റ്
+                <p className="text-amber-600 dark:text-amber-400 font-bold text-sm tracking-wider uppercase mt-1">
+                  ചെയർമാൻ & സ്ഥാപകൻ
                 </p>
-                <div className="mt-4 text-slate-600 dark:text-slate-300 space-y-2">
-                  <p className="flex items-center gap-2 justify-center text-sm">
-                    <Calendar size={16} /> ഒരു അപ്പസ്തോലനായി വിളിക്കപ്പെട്ടു –{" "}
-                    <strong>2011 മാർച്ച് 11</strong> സഭ ആരംഭിക്കാൻ ദർശനം
-                    ലഭിച്ചു.
+
+                <div className="mt-6 text-slate-600 dark:text-slate-300 space-y-4 text-base leading-relaxed">
+                  <p className="flex items-center gap-2 justify-center text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-full w-fit">
+                    <Calendar size={14} /> 18 വർഷത്തെ ജീവകാരുണ്യ മിനിസ്ട്രി
                   </p>
-                  <p className="text-sm">
-                    നഷ്ടപ്പെട്ടവരോടും തകർന്നവരോടുമുള്ള ഹൃദയത്തോടെ, റവ. ജോൺസ്
-                    പ്രവാചക ഉൾക്കാഴ്ചയോടും കരുണയോടും കൂടി നേതൃത്വം നൽകുകയും
-                    കുടുംബങ്ങൾ പുനഃസ്ഥാപിക്കപ്പെടാൻ ആഗ്രഹിക്കുകയും ചെയ്യുന്നു.
+                  <p className="text-left">
+                    സമൂഹത്തിൽ പാർശ്വവൽക്കരിക്കപ്പെട്ട തടവുകാർ, അശരണരായ അവരുടെ
+                    മക്കൾ, RCC-യിലെ നിർദ്ധനരായ ക്യാൻസർ രോഗികൾ എന്നിവരിലേക്ക്
+                    നേരിട്ടെത്തി ആശ്വാസമേകുന്ന **Divine Ministry Charitable
+                    Trust**-ന്റെ മുഖ്യ സൂത്രധാരൻ.
                   </p>
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-700 text-left">
+                    <h4 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1">
+                      <ArrowUpRight size={16} className="text-amber-500" /> ഭാവി
+                      ദർശനം & വ്യാപ്തി:
+                    </h4>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      നിലവിൽ 100-ലധികം സാധുക്കളായ വിദ്യാർത്ഥികൾക്ക്
+                      പഠനോപകരണങ്ങളും സഹായങ്ങളും നൽകുന്നു. വരും വർഷങ്ങളിൽ
+                      കേരളത്തിന് പുറത്തേക്കും കൂടുതൽ കമ്മ്യൂണിറ്റി ഔട്ട്‌റീച്ച്
+                      സെന്ററുകൾ സ്ഥാപിച്ച് ഈ കാരുണ്യപ്രവർത്തനം
+                      വ്യാപിപ്പിക്കാനും, ഒരു വലിയ കമ്മ്യൂണിറ്റി ഷെൽട്ടർ ഹോം
+                      നിർമ്മിക്കാനുമുള്ള ലക്ഷ്യത്തിലാണ് അദ്ദേഹം.
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Sister Christy Jones */}
+            {/* Sister Irene G. (Co-Founder & Partner) */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
-              className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+              className="bg-white/80 dark:bg-slate-800/60 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-slate-200/60 dark:border-slate-700/50 relative overflow-hidden group"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-rose-500 shadow-xl mb-5">
+                <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-rose-500/30 shadow-xl mb-6 relative group-hover:border-rose-500 transition-all duration-300">
                   <img
-                    src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&auto=format"
-                    alt="Sister Christy Jones"
-                    className="w-full h-full object-cover"
+                    src={PasterLorence1} // തൽക്കാലം ഒരേ ഇമേജ്, പിന്നീട് മാറ്റാം
+                    alt="സിസ്റ്റർ ഐറിൻ . G"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white">
                   സിസ്റ്റർ ഐറിൻ . G
                 </h3>
-                <p className="text-rose-600 dark:text-rose-400 font-semibold">
-                  പ്രാർത്ഥനാ യോദ്ധാവ് & ആരാധനാ നേതാവ്
+                <p className="text-rose-600 dark:text-rose-400 font-bold text-sm tracking-wider uppercase mt-1">
+                  പ്രാർത്ഥനാ യോദ്ധാവ് & സഹ-സ്ഥാപക
                 </p>
-                <div className="mt-4 text-slate-600 dark:text-slate-300 text-sm space-y-2">
-                  <p>
-                    Pr. ലോറൻസ് ജോസഫിന്റെ ശുശ്രൂഷ പങ്കാളി എന്ന നിലയിൽ, ഐറിൻ
-                    പ്രാർത്ഥനയിലും ആരാധനയിലും ആഴമായ അഭിഷേകം കൊണ്ടുവരുന്നു.
+
+                <div className="mt-6 text-slate-600 dark:text-slate-300 space-y-4 text-base leading-relaxed">
+                  <p className="flex items-center gap-2 justify-center text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 px-3 py-1.5 rounded-full w-fit">
+                    <Heart size={14} /> വിശ്വസ്തതയുടെ 18 വർഷങ്ങൾ
                   </p>
-                  <p>
-                    സഭയുടെ വളർച്ച, ഇടയപരിചരണം, ദൈവസന്നിധിയിലേക്ക് ജനങ്ങളെ
-                    നയിക്കുന്നതിൽ അവർ നിർണായക പങ്ക് വഹിക്കുന്നു.
+                  <p className="text-left">
+                    Pr. ലോറൻസ് ജോസഫിന്റെ ധർമ്മപത്നിയും ഏറ്റവും വിശ്വസ്തയായ
+                    ശുശ്രൂഷാ പങ്കാളിയുമാണ് ഐറിൻ. കഴിഞ്ഞ 18 വർഷമായി
+                    അദ്ദേഹത്തോടൊപ്പം എല്ലാ പ്രതിസന്ധികളിലും തോളോട് തോൾ ചേർന്ന്
+                    സഭയുടെ വളർച്ചയിലും ചാരിറ്റി പ്രവർത്തനങ്ങളിലും അവർ
+                    മാതൃകാപരമായ നേതൃത്വം നൽകിപ്പോരുന്നു.
                   </p>
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-700 text-left">
+                    <h4 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1">
+                      <Users size={16} className="text-rose-500" /> ഇടയപരിചരണവും
+                      ലക്ഷ്യവും:
+                    </h4>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      സ്ത്രീകളുടെയും കുട്ടികളുടെയും മാനസികവും ആത്മീയവുമായ
+                      ശാക്തീകരണത്തിന് മുൻകൈ എടുക്കുന്നു. വിധവകൾക്കുള്ള
+                      വസ്ത്ര-ഭക്ഷണ വിതരണവും, തൊഴിൽരഹിതർക്ക് സ്വയംതൊഴിൽ
+                      കണ്ടെത്താനുള്ള ധനസഹായ പദ്ധതികളും കൂടുതൽ കുടുംബങ്ങളിലേക്ക്
+                      വ്യാപിപ്പിക്കാൻ അവർ മുന്നിൽ നിന്ന് നയിക്കുന്നു.
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>

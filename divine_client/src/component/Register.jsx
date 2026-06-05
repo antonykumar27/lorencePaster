@@ -43,6 +43,7 @@ const Auth = () => {
     isAdmin: false,
     message: "",
   });
+  console.log("emailStatus", emailStatus);
   const storeAuthData = (userData, token) => {
     const authData = {
       user: { ...userData },

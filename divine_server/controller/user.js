@@ -20,7 +20,7 @@ exports.checkAdminEmail = catchAsyncError(async (req, res) => {
   }
 
   email = email.toLowerCase(); // ഇമെയിൽ ലോവർകേസ് ആക്കുന്നു
-  const adminEmail = "ano27@gmail.com";
+  const adminEmail = "divine@gmail.com";
 
   // Check if email exists in database
   const existingUser = await User.findOne({ email });
@@ -53,7 +53,7 @@ exports.checkAdminEmail = catchAsyncError(async (req, res) => {
 exports.register = catchAsyncError(async (req, res, next) => {
   console.log("req.body", req.body);
   const { name, email, password, adminSecretCode, mobileNumber } = req.body;
-  const ADMIN_EMAIL = "ano27@gmail.com";
+  const ADMIN_EMAIL = "divine@gmail.com";
   const ADMIN_SECRET_CODE = "ADMIN2024!@#";
 
   // 1. യൂസർ ഓൾറെഡി ഉണ്ടോ എന്ന് പരിശോധിക്കുന്നു

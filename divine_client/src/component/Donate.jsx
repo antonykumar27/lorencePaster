@@ -62,7 +62,7 @@ const Donate = () => {
 
       // 1. ബാക്ക്എൻഡിൽ നിന്ന് Razorpay KEY ഫെച്ച് ചെയ്യുന്നു 🔑
       const keyRes = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/razorpay-key`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/prayer/razorpay-key`,
       );
       const { key } = await keyRes.json();
 
@@ -70,17 +70,22 @@ const Donate = () => {
       const orderResponse = await createDonation(donationPayload).unwrap();
 
       // 3. Razorpay ഒഫീഷ്യൽ ഓപ്ഷൻസ് സെറ്റ് ചെയ്യുന്നു
+      // 3. Razorpay ഒഫീഷ്യൽ ഓപ്ഷൻസ് സെറ്റ് ചെയ്യുന്നു
       const options = {
         key: key,
-        amount: orderResponse.order.amount,
-        currency: orderResponse.order.currency,
+        // 💡 orderResponse.data-ൽ നിന്നാണ് എടുക്കേണ്ടത്
+        amount:
+          orderResponse.data?.order?.amount || orderResponse.order?.amount,
+        currency:
+          orderResponse.data?.order?.currency || orderResponse.order?.currency,
         name: "Divine Ministries",
         description: "Thank you for your donation",
-        order_id: orderResponse.order.id,
+        // ⚠️ ഇതാണ് ഏറ്റവും പ്രധാനം!
+        order_id: orderResponse.data?.order?.id || orderResponse.order?.id,
 
         // പേയ്‌മെന്റ് സക്സസ് ആയാൽ Razorpay ഈ ഫങ്ഷൻ ട്രിഗർ ചെയ്യും
         handler: async function (response) {
-          setIsVerifying(true); // ലോഡിങ് സ്റ്റാർട്ട് ചെയ്യുന്നു
+          setIsVerifying(true);
           try {
             const verifyPayload = {
               razorpay_order_id: response.razorpay_order_id,
@@ -88,7 +93,6 @@ const Donate = () => {
               razorpay_signature: response.razorpay_signature,
             };
 
-            // 4. ബാക്ക്എൻഡ് വെരിഫിക്കേഷൻ API കോൾ ചെയ്യുന്നു 🔄
             const verificationResult =
               await verifyDonation(verifyPayload).unwrap();
 
@@ -108,7 +112,7 @@ const Donate = () => {
               err?.data?.error || "പേയ്‌മെന്റ് വെരിഫിക്കേഷൻ പരാജയപ്പെട്ടു!",
             );
           } finally {
-            setIsVerifying(false); // ലോഡിങ് അവസാനിപ്പിക്കുന്നു
+            setIsVerifying(false);
           }
         },
         prefill: {
@@ -120,7 +124,6 @@ const Donate = () => {
           color: "#b30021",
         },
         modal: {
-          // യൂസർ പേയ്‌മെന്റ് വിൻഡോ വെറുതെ ക്ലോസ് ചെയ്താൽ ലോഡിങ് മാറ്റാൻ
           onDismiss: function () {
             setIsVerifying(false);
           },

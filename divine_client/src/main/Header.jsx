@@ -54,6 +54,7 @@ const Header = ({ darkMode, setDarkMode }) => {
     { name: "VOLUNTEERS", path: "/volunteers" },
     { name: "HELP REQUEST", path: "/help_request" },
     { name: "CONTACT", path: "/contact" },
+    { name: "OUR PLAN", path: "/trustGrowthPlan" },
   ];
 
   const handleLogout = () => {

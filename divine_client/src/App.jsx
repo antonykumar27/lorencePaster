@@ -40,6 +40,7 @@ import CreateYoutube from "./component/CreateYoutube";
 import Volunteer from "./component/Volunteer";
 import VolunteersRequestList from "./component/VolunteersRequestList";
 import HelpRequest from "./component/HelpRequest";
+import TrustGrowthPlan from "./component/TrustGrowthPlan";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -80,6 +81,7 @@ function App() {
             <Route path="/sponsor" element={<Sponsor />} />
             <Route path="/programs" element={<Programs />} />
             <Route path="/programs/create" element={<CreateEvent />} />
+            <Route path="/trustGrowthPlan" element={<TrustGrowthPlan />} />
             <Route path="/programs/edit/:id" element={<EditEvent />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/create" element={<GalleryCreate />} />

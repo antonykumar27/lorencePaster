@@ -17,7 +17,7 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { useYouTubeVideos } from "./useYouTubeVideos";
-
+import PasterLorence from "../assets/paster1.jpg";
 const Home = () => {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
@@ -359,9 +359,12 @@ const Home = () => {
               viewport={{ once: true }}
               className="relative"
             >
+              {/* ബാക്ക്ഗ്രൗണ്ടിലുള്ള ഗ്ലോ എഫക്റ്റ് */}
               <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-500/20 rounded-3xl blur-2xl" />
+
+              {/* 2. ഇവിടെ src-ലേക്ക് നമ്മൾ ഇമ്പോർട്ട് ചെയ്ത വേരിയബിൾ (PasterLorence) കൊടുക്കുക */}
               <img
-                src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&auto=format"
+                src={PasterLorence}
                 alt="Pr. Lorence Joseph"
                 className="relative rounded-2xl shadow-2xl w-full object-cover aspect-[3/4]"
               />
@@ -372,29 +375,33 @@ const Home = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <span className="text-amber-600 dark:text-amber-400 text-sm font-bold tracking-wider">
+              <span className="text-amber-600 dark:text-amber-400 text-sm font-bold tracking-wider uppercase">
                 ഞങ്ങളുടെ സ്ഥാപകൻ
               </span>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white">
-                പ്രൈ. ലോറൻസ് ജോസഫ്
+
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">
+                Pr. ലോറൻസ് ജോസഫ്
               </h2>
+
               <div className="w-20 h-1 bg-gradient-to-r from-amber-500 to-red-500 rounded-full" />
+
+              {/* 2026 Trending Catchy Text Logic */}
+              <p className="text-xl font-bold bg-gradient-to-r from-amber-600 to-red-600 bg-clip-text text-transparent leading-relaxed">
+                "കഴിഞ്ഞ 18 വർഷമായി, ഇരുളടഞ്ഞ ജയിൽ അറകൾ മുതൽ ഹോസ്പിറ്റൽ വാർഡുകൾ
+                വരെ പ്രത്യാശയുടെ വെളിച്ചമെത്തിക്കുന്ന കാരുണ്യവഴി."
+              </p>
+
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                18 വർഷത്തിലധികം ശുശ്രൂഷാ പരിചയമുള്ള ദീർഘവീക്ഷണമുള്ള നേതാവും,
-                എഴുത്തുകാരനും, പ്രസംഗകനുമാണ് പ്രൈ. ലോറൻസ് ജോസഫ്. അദ്ദേഹത്തിന്റെ
-                കരുണാനിർഭരമായ പ്രബോധനങ്ങളിലൂടെയും, പ്രവാചക ഉൾക്കാഴ്ചകളിലൂടെയും,
-                കുടുംബങ്ങളുടെ പുനഃസ്ഥാപനത്തിന് നൽകുന്ന പ്രാധാന്യത്തിലൂടെയും
-                ആയിരക്കണക്കിന് ആളുകളെ അദ്ദേഹം സ്വാധീനിച്ചിട്ടുണ്ട്.
+                അശരണരായ തടവുകാരുടെ പുനരധിവാസം, അവരുടെ മക്കളുടെ വിദ്യാഭ്യാസം,
+                RCC-യിലെ രോഗികൾക്കുള്ള ഭക്ഷണവിതരണം, വിധവകൾക്കുള്ള ആശ്വാസകിറ്റുകൾ
+                തുടങ്ങി സമൂഹത്തിന്റെ ഏറ്റവും താഴേത്തട്ടിലുള്ളവർക്കായി **Divine
+                Ministry Charitable Trust**-ലൂടെ അദ്ദേഹം നടത്തുന്ന പ്രവർത്തനങ്ങൾ
+                ആയിരങ്ങളുടെ ജീവിതമാണ് മാറ്റിമറിച്ചത്.
               </p>
-              <p className="text-slate-600 dark:text-slate-300">
-                തകർന്നവരോടും നഷ്ടപ്പെട്ടവരോടുമുള്ള അദ്ദേഹത്തിന്റെ തീക്ഷ്ണമായ
-                സ്നേഹം, രാജ്യമെമ്പാടും നിരവധി കമ്മ്യൂണിറ്റി ഔട്ട്‌റീച്ച്
-                പ്രോഗ്രാമുകൾക്കും, സഭകൾ സ്ഥാപിക്കുന്നതിനും, നേതൃത്വ
-                പരിശീലനങ്ങൾക്കും വഴിയൊരുക്കി.
-              </p>
+
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-full transition-all"
+                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/20 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 കൂടുതൽ അറിയുക <ArrowRight size={18} />
               </Link>
