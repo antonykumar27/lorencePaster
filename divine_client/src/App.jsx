@@ -41,6 +41,8 @@ import Volunteer from "./component/Volunteer";
 import VolunteersRequestList from "./component/VolunteersRequestList";
 import HelpRequest from "./component/HelpRequest";
 import TrustGrowthPlan from "./component/TrustGrowthPlan";
+import AdminDashBoard from "./component/AdminDashBoard";
+import AllMembers from "./component/AllMembers";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -90,6 +92,9 @@ function App() {
             <Route path="/prayer-requestList" element={<PrayerRequestList />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/donate" element={<Donate />} />
+            <Route path="/adminDashboard" element={<AdminDashBoard />} />
+            <Route path="/getAllMembers" element={<AllMembers />} />
+
             <Route path="/donation-dashboard" element={<DonationDashboard />} />
             <Route path="/admin-login" element={<Register />} />
             <Route path="/ministries/kids" element={<KidsMinistry />} />

@@ -50,7 +50,10 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["Admin"],
     }),
-
+    getAllmembers: builder.query({
+      query: () => "/allMembers",
+      providesTags: [{ type: "Prayer", id: "LIST" }],
+    }),
     // ==========================================
     // 🙏 PRAYER REQUESTS ENDPOINTS
     // ==========================================
@@ -101,7 +104,7 @@ export const {
   useRegisterAdminMutation,
   useLoginAdminMutation,
   useUpdateAdminProfileMutation,
-
+  useGetAllmembersQuery,
   // Divine Ministries Services Hooks
   useCreatePrayerRequestMutation,
   useGetPrayerRequestsQuery,

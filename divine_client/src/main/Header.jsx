@@ -50,11 +50,10 @@ const Header = ({ darkMode, setDarkMode }) => {
     { name: "DIVINE HANDS", path: "/divine-hands" },
     { name: "PRAYER TIME", path: "/prayerSchedule" },
     { name: "PRAYER REQUEST", path: "/prayer-request" },
-    { name: "PRAYER LIST", path: "/prayer-requestList" },
-    { name: "VOLUNTEERS", path: "/volunteers" },
-    { name: "HELP REQUEST", path: "/help_request" },
+
     { name: "CONTACT", path: "/contact" },
     { name: "OUR PLAN", path: "/trustGrowthPlan" },
+    { name: "ADMIN DASHBOARD", path: "/adminDashboard" },
   ];
 
   const handleLogout = () => {
@@ -146,15 +145,6 @@ const Header = ({ darkMode, setDarkMode }) => {
             <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <div className="flex items-center gap-3">
-                  {user?.isAdmin && (
-                    <Link
-                      to="/donation-dashboard"
-                      className="text-xs font-bold text-yellow-400 hover:text-white transition-colors uppercase tracking-wider flex items-center gap-1"
-                    >
-                      <LayoutDashboard size={14} />
-                      Dashboard
-                    </Link>
-                  )}
                   <button
                     onClick={handleLogout}
                     className="text-xs font-bold text-white hover:text-red-500 transition-colors uppercase tracking-wider flex items-center gap-1"
@@ -283,16 +273,6 @@ const Header = ({ darkMode, setDarkMode }) => {
               <div className="pt-6 mt-auto border-t border-white/20 space-y-4">
                 {user ? (
                   <div className="space-y-3">
-                    {user?.isAdmin && (
-                      <Link
-                        to="/donation-dashboard"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-yellow-500/20 text-yellow-400 font-semibold"
-                      >
-                        <LayoutDashboard size={18} />
-                        Dashboard
-                      </Link>
-                    )}
                     <button
                       onClick={handleLogout}
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"

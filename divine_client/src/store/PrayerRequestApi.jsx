@@ -151,12 +151,17 @@ export const prayerRequestApi = createApi({
         { type: "PrayerRequest", id: "LIST" }, // ഇത് കൊടുത്താൽ മാത്രമേ ലിസ്റ്റ് പേജിൽ മാറ്റം കാണിക്കൂ
       ],
     }),
+    getDashboardStats: builder.query({
+      query: () => "/dashboard-stats",
+      providesTags: [{ type: "PrayerRequest", id: "LIST" }], // "Prayer" എന്നത് മാറ്റി "PrayerRequest" ആക്കി
+    }),
   }),
 });
 
 export const {
   useGetUsersQuery,
   useGetCloudinaryQuery,
+  useGetDashboardStatsQuery,
   useLazyGetCloudinaryQuery,
   useGetUserByIdQuery,
   useCreateUserMutation,

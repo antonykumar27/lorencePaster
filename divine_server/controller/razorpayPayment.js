@@ -3,6 +3,10 @@ const Donation = require("../models/donation");
 const PrayerRequest = require("../models/prayerRequest");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+
+const User = require("../models/user"); // Total members, new registrations
+const Volunteer = require("../models/volunteer");
+
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET,
@@ -275,6 +279,127 @@ const updatePrayerRequestStatus = async (req, res) => {
     });
   }
 };
+
+const getDashboardStats = async (req, res) => {
+  try {
+    // ========== MEMBERS (Role‑wise) ==========
+    // Total church members
+    const totalChurchMembers = await User.countDocuments({
+      role: "church_member",
+    });
+    // Total common users
+    const totalCommonUsers = await User.countDocuments({ role: "common_user" });
+    // Total admins
+    const totalAdmins = await User.countDocuments({ role: "admin" });
+    // All members (church + common + admin) – optional
+    const totalAllMembers = totalChurchMembers + totalCommonUsers + totalAdmins;
+
+    // New registrations in last 7 days (all roles)
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newRegistrationsThisWeek = await User.countDocuments({
+      createdAt: { $gte: oneWeekAgo },
+    });
+
+    // New church members this week (if needed)
+    const newChurchMembersThisWeek = await User.countDocuments({
+      role: "church_member",
+      createdAt: { $gte: oneWeekAgo },
+    });
+
+    // ========== VOLUNTEERS ==========
+    const totalVolunteers = await Volunteer.countDocuments();
+    const pendingVolunteers = await Volunteer.countDocuments({
+      status: "pending",
+    });
+    const approvedVolunteers = await Volunteer.countDocuments({
+      status: "approved",
+    });
+
+    // ========== PRAYER REQUESTS ==========
+    const totalPrayerRequests = await PrayerRequest.countDocuments();
+    const pendingPrayers = await PrayerRequest.countDocuments({
+      status: "pending",
+    });
+
+    // ========== HELP REQUESTS (if model exists) ==========
+    let totalHelpRequests = 0;
+    let pendingHelpRequests = 0;
+    try {
+      const HelpRequest = require("../models/helpRequest");
+      totalHelpRequests = await HelpRequest.countDocuments();
+      pendingHelpRequests = await HelpRequest.countDocuments({
+        status: "pending",
+      });
+    } catch (err) {}
+
+    // ========== CONTACT MESSAGES ==========
+    let unreadMessages = 0;
+    let totalMessages = 0;
+    try {
+      const Message = require("../models/message");
+      totalMessages = await Message.countDocuments();
+      unreadMessages = await Message.countDocuments({ isRead: false });
+    } catch (err) {}
+
+    // ========== DONATIONS ==========
+    const donations = await Donation.aggregate([
+      { $match: { status: "Completed" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+    const totalDonations = donations[0]?.total || 0;
+
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    const monthlyDonations = await Donation.aggregate([
+      { $match: { status: "Completed", createdAt: { $gte: startOfMonth } } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+    const thisMonthCollection = monthlyDonations[0]?.total || 0;
+
+    // ========== FINAL RESPONSE ==========
+    res.status(200).json({
+      success: true,
+      data: {
+        // Role‑based member counts
+        totalChurchMembers,
+        totalCommonUsers,
+        totalAdmins,
+        totalAllMembers,
+        newRegistrationsThisWeek,
+        newChurchMembersThisWeek,
+
+        // Volunteers
+        totalVolunteers,
+        approvedVolunteers,
+        pendingVolunteers,
+
+        // Prayer Requests
+        totalPrayerRequests,
+        pendingPrayers,
+
+        // Help Requests
+        totalHelpRequests,
+        pendingHelpRequests,
+
+        // Messages
+        totalMessages,
+        unreadMessages,
+
+        // Donations
+        totalDonations,
+        thisMonthCollection,
+      },
+    });
+  } catch (error) {
+    console.error("Dashboard stats error:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to fetch dashboard stats" });
+  }
+};
+
 module.exports = {
   getRazorpayKey,
   createDonationOrder,
@@ -283,4 +408,5 @@ module.exports = {
   createPrayerRequest,
   getPrayerRequests,
   updatePrayerRequestStatus,
+  getDashboardStats,
 };

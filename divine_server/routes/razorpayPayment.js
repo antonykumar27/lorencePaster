@@ -10,6 +10,7 @@ const {
   createPrayerRequest,
   getPrayerRequests,
   updatePrayerRequestStatus,
+  getDashboardStats,
 } = require("../controller/razorpayPayment"); // ഫോൾഡർ 'controllers' ആണെങ്കിൽ അങ്ങനെ നൽകുക
 
 // /api/v1/users/razorpay-key
@@ -20,6 +21,7 @@ router.post("/donate", createDonationOrder);
 router.post("/prayer-request", createPrayerRequest);
 router.put("/prayer-request/:id", updatePrayerRequestStatus);
 router.get("/prayer-requests", getPrayerRequests);
+router.get("/dashboard-stats", getDashboardStats);
 
 // /api/v1/users/verify
 router.post("/verify", verifyDonationPayment);

@@ -1,4 +1,4 @@
-// src/pages/Auth.jsx (or replace Register.jsx)
+// src/pages/Auth.jsx
 import React, { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,17 +14,22 @@ import {
   ShieldCheck,
   AlertCircle,
   Phone,
+  Upload,
+  Image as ImageIcon,
+  X,
 } from "lucide-react";
 import {
   useLoginAdminMutation,
   useRegisterAdminMutation,
   useLazyCheckEmailQuery,
 } from "../store/UserApi";
-import { useAuth } from "../context/AuthContext"; // പാത്ത് കൃത്യമാണെന്ന് ഉറപ്പാക്കുക
+import { useAuth } from "../context/AuthContext";
+
 const Auth = () => {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true); // toggle between login / register
-  const { login: updateAuthContext } = useAuth(); // AuthContext-ലെ login ഫങ്ഷൻ എടുക്കുന്നു
+  const [isLogin, setIsLogin] = useState(true);
+  const { login: updateAuthContext } = useAuth();
+
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -37,23 +42,37 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [adminSecretCode, setAdminSecretCode] = useState("");
+  const [selectedRole, setSelectedRole] = useState("common_user"); // "common_user" or "church_member"
+  const [profileImage, setProfileImage] = useState(null); // File object
+  const [imagePreview, setImagePreview] = useState(null);
   const [emailStatus, setEmailStatus] = useState({
     isValid: false,
     isChecking: false,
     isAdmin: false,
     message: "",
   });
-  console.log("emailStatus", emailStatus);
-  const storeAuthData = (userData, token) => {
-    const authData = {
-      user: { ...userData },
-      token: token,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("auth", JSON.stringify(authData));
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    return authData;
+
+  // Image upload handlers
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Only image files are allowed");
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Image size must be less than 2MB");
+        return;
+      }
+      setProfileImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removeImage = () => {
+    setProfileImage(null);
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImagePreview(null);
   };
 
   // API hooks
@@ -61,7 +80,7 @@ const Auth = () => {
   const [login, { isLoading: isLoggingIn }] = useLoginAdminMutation();
   const [checkEmail] = useLazyCheckEmailQuery();
 
-  // Email validation for registration
+  // Email validation (admin detection)
   const handleEmailChange = useCallback(
     async (e) => {
       const emailValue = e.target.value;
@@ -106,7 +125,7 @@ const Auth = () => {
     [checkEmail],
   );
 
-  // Handle registration
+  // Handle registration with role + image
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!name.trim()) return toast.error("Name is required");
@@ -122,60 +141,51 @@ const Auth = () => {
     formData.append("email", email);
     formData.append("mobileNumber", mobileNumber);
     formData.append("password", password);
-
+    formData.append("role", emailStatus.isAdmin ? "admin" : selectedRole); // 👈 role from selection or admin
+    if (profileImage) {
+      formData.append("media", profileImage); // backend expects field name "profileImage"
+    }
     if (emailStatus.isAdmin)
       formData.append("adminSecretCode", adminSecretCode);
 
     try {
       const res = await register(formData).unwrap();
       toast.success(res.message || "Registration successful! Please login.");
-      setIsLogin(true); // switch to login form
-      // clear fields
+      setIsLogin(true);
+      // Reset form
       setName("");
       setEmail("");
       setPassword("");
       setMobileNumber("");
       setAdminSecretCode("");
+      setSelectedRole("common_user");
+      removeImage();
     } catch (err) {
       toast.error(err.data?.message || "Registration failed");
     }
   };
 
-  // Handle login
-  // Handle login
+  // Login unchanged (but ensure backend returns role)
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login clicked, Email:", loginEmail); // ഇത് പ്രിന്റ് ആകുന്നുണ്ടോ?
-
     try {
       const res = await login({
         email: loginEmail,
         password: loginPassword,
       }).unwrap();
-
-      console.log("API Response:", res); // ഇവിടെയാണ് മെയിൻ പ്രശ്നം, res കൃത്യമാണോ?
-
-      // Auth.jsx - handleLogin-ൽ
       if (res && res.token && res.user) {
         localStorage.setItem("token", res.token);
         localStorage.setItem("user", JSON.stringify(res.user));
-
-        // Context-ലേക്ക് ഡാറ്റ കൈമാറുക
         updateAuthContext(res.user, res.token);
-
         toast.success("Login successful!");
-
-        // ഒരു ചെറിയ setTimeout കൊടുത്താൽ സ്റ്റോറേജ് പൂർണ്ണമായും റൈറ്റ് ആകുന്നത് വരെ വെയിറ്റ് ചെയ്യാം
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 100);
+        setTimeout(() => navigate("/dashboard"), 100);
       }
     } catch (err) {
-      console.error("Login Error:", err); // ഇവിടെ എന്തെങ്കിലും എറർ വരുന്നുണ്ടോ?
       toast.error(err.data?.message || "Invalid credentials");
     }
   };
 
+  // Styles
   const inputStyle = `
     w-full h-12 pl-11 pr-4 rounded-xl transition-all duration-200
     bg-white dark:bg-slate-900
@@ -192,13 +202,21 @@ const Auth = () => {
         <div className="flex gap-2 p-1 mb-8 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl">
           <button
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${isLogin ? "bg-blue-600 text-white shadow-lg" : "text-slate-600 dark:text-slate-400"}`}
+            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+              isLogin
+                ? "bg-blue-600 text-white shadow-lg"
+                : "text-slate-600 dark:text-slate-400"
+            }`}
           >
             Login
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${!isLogin ? "bg-blue-600 text-white shadow-lg" : "text-slate-600 dark:text-slate-400"}`}
+            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+              !isLogin
+                ? "bg-blue-600 text-white shadow-lg"
+                : "text-slate-600 dark:text-slate-400"
+            }`}
           >
             Register
           </button>
@@ -217,9 +235,10 @@ const Auth = () => {
                 Welcome Back
               </h2>
               <form onSubmit={handleLogin} className="space-y-5">
+                {/* Email & Password fields (same as before) */}
                 <div className="relative group">
                   <Mail
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
@@ -233,7 +252,7 @@ const Auth = () => {
                 </div>
                 <div className="relative group">
                   <Lock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
@@ -247,7 +266,7 @@ const Auth = () => {
                   <button
                     type="button"
                     onClick={() => setShowLoginPassword(!showLoginPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
                   >
                     {showLoginPassword ? (
                       <EyeOff size={18} />
@@ -259,7 +278,7 @@ const Auth = () => {
                 <button
                   type="submit"
                   disabled={isLoggingIn}
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-70"
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition"
                 >
                   {isLoggingIn ? (
                     <Loader2 className="animate-spin" size={20} />
@@ -282,9 +301,10 @@ const Auth = () => {
                 Create Account
               </h2>
               <form onSubmit={handleRegister} className="space-y-4">
+                {/* Name */}
                 <div className="relative group">
                   <User
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
@@ -296,23 +316,25 @@ const Auth = () => {
                     required
                   />
                 </div>
+                {/* Mobile */}
                 <div className="relative group">
                   <Phone
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
-                    type="tel" // 'number'-ന് പകരം 'tel' നൽകുന്നതാണ് കൂടുതൽ നല്ലത്
+                    type="tel"
                     placeholder="Mobile Number"
                     value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)} // കറക്റ്റ് സെറ്റർ ആഡ് ചെയ്തു ബ്രോ
+                    onChange={(e) => setMobileNumber(e.target.value)}
                     className={inputStyle}
                     required
                   />
                 </div>
+                {/* Email */}
                 <div className="relative group">
                   <Mail
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
@@ -348,9 +370,44 @@ const Auth = () => {
                     <span>{emailStatus.message}</span>
                   </div>
                 )}
+
+                {/* Role Selection (only for non-admin registration) */}
+                {!emailStatus.isAdmin && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Role
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="role"
+                          value="common_user"
+                          checked={selectedRole === "common_user"}
+                          onChange={() => setSelectedRole("common_user")}
+                          className="text-blue-600"
+                        />
+                        <span>Common User</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="role"
+                          value="church_member"
+                          checked={selectedRole === "church_member"}
+                          onChange={() => setSelectedRole("church_member")}
+                          className="text-blue-600"
+                        />
+                        <span>Church Member</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Password */}
                 <div className="relative group">
                   <Lock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     size={19}
                   />
                   <input
@@ -367,7 +424,7 @@ const Auth = () => {
                     onClick={() =>
                       setShowRegisterPassword(!showRegisterPassword)
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
                   >
                     {showRegisterPassword ? (
                       <EyeOff size={18} />
@@ -376,6 +433,8 @@ const Auth = () => {
                     )}
                   </button>
                 </div>
+
+                {/* Admin Secret Code (if email is admin) */}
                 {emailStatus.isAdmin && (
                   <div className="relative group">
                     <ShieldCheck
@@ -392,10 +451,46 @@ const Auth = () => {
                     />
                   </div>
                 )}
+
+                {/* Image Upload */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Profile Picture (optional)
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl hover:bg-slate-200 transition">
+                      <Upload size={18} />
+                      <span className="text-sm">Choose image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {imagePreview && (
+                      <div className="relative">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5"
+                        >
+                          <X size={12} className="text-white" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={isRegistering || emailStatus.isChecking}
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-70"
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition"
                 >
                   {isRegistering ? (
                     <Loader2 className="animate-spin" size={20} />
