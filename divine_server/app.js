@@ -36,9 +36,8 @@ app.use("/api/v1/volunteers", volunteers);
 
 // Production configuration
 if (process.env.NODE_ENV === "production") {
-  console.log("Hello production");
   // Serve frontend static files
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+  app.use(express.static(path.join(__dirname, "../divine_client/dist")));
 
   // 💡 app.get-ന് പകരം app.use ഉപയോഗിച്ച് എല്ലാ പേജുകളിലേക്കും index.html കൊടുക്കുന്നു
   app.use((req, res, next) => {
@@ -46,8 +45,8 @@ if (process.env.NODE_ENV === "production") {
     if (req.path.startsWith("/api")) {
       return next();
     }
-    console.log("Hello production2");
-    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+
+    res.sendFile(path.join(__dirname, "../divine_client/dist/index.html"));
   });
 } else {
   app.get("/", (req, res) => {
